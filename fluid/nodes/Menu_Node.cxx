@@ -209,7 +209,7 @@ bool Menu_Item_Node::node_creation_assistant(Strategy& strategy, Node*& anchor)
       }
       if (!Fluid.proj.tree.current) return false;
       if (job == CREATE_MENUBAR) {
-        const char* type = "Fl_Menu_Button";
+        std::string type = "Fl_Menu_Button";
         if (dynamic_cast<Submenu_Node*>(this)) type = "Fl_Menu_Bar";
         Fluid.proj.tree.current = add_new_widget_from_user(type, Strategy::AS_FIRST_CHILD, true);
         job = CREATE_MENUITEM;
@@ -468,7 +468,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
     // k is the name of the enclosing class (or classes)
     if (!k.empty()) {
       // Implement the callback as a static member function
-      f.write_c("void " + k + "::" + std::string(cn) + "(Fl_Menu_* o, " + ut + " v) {\n");
+      f.write_c("void " + k + "::" + cn + "(Fl_Menu_* o, " + ut + " v) {\n");
       // Find the Fl_Menu_ container for this menu item
       Node* t = parent; while (dynamic_cast<Menu_Item_Node*>(t)) t = t->parent;
       if (t) {
@@ -496,7 +496,7 @@ void Menu_Item_Node::write_static(fluid::io::Code_Writer& f) {
           // user_data is cast into a pointer to the
           if (!q || !dynamic_cast<Widget_Class_Node*>(q))
             f.write_c("->user_data()");
-          f.write_c("))->" + std::string(cn) + "_i(o,v);\n}\n");
+          f.write_c("))->" + cn + "_i(o,v);\n}\n");
         }
       } else {
         f.write_c("#error Enclosing Fl_Menu_* not found\n");
@@ -657,10 +657,10 @@ void Menu_Item_Node::write_item(fluid::io::Code_Writer& f) {
   f.write_c("},\n");
 }
 
-void start_menu_initialiser(fluid::io::Code_Writer& f, int &initialized, const char *name, int index) {
+void start_menu_initialiser(fluid::io::Code_Writer& f, int &initialized, const std::string& name, int index) {
   if (!initialized) {
     initialized = 1;
-    f.write_c(f.indent() + "{ Fl_Menu_Item* o = &" + std::string(name) + "[" + std::to_string(index) + "];\n");
+    f.write_c(f.indent() + "{ Fl_Menu_Item* o = &" + name + "[" + std::to_string(index) + "];\n");
     f.indent_more();
   }
 }
@@ -707,7 +707,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
     f.write_c(f.indent_plus(1) + name() + " = &" + mname + "[" + std::to_string(i) + "];\n");
   }
   if (active_image.asset) {
-    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    start_menu_initialiser(f, menuItemInitialized, mname, i);
     if (!label().empty()) {
       f.write_c(f.indent() + "Fl_Multi_Label* ml = new Fl_Multi_Label;\n");
       f.write_c(f.indent() + "ml->labela = (char*)");
@@ -735,7 +735,7 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
       // label was already copied a few lines up
     } else if (   t==FL_NORMAL_LABEL   || t==FL_SHADOW_LABEL
                || t==FL_ENGRAVED_LABEL || t==FL_EMBOSSED_LABEL) {
-      start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+      start_menu_initialiser(f, menuItemInitialized, mname, i);
       if (Fluid.proj.i18n.type==fluid::I18n_Type::GNU) {
         f.write_c(f.indent() + "o->label(" + Fluid.proj.i18n.gnu_function + "(o->label()));\n");
       } else if (Fluid.proj.i18n.type==fluid::I18n_Type::POSIX) {
@@ -746,11 +746,11 @@ void Menu_Item_Node::write_code1(fluid::io::Code_Writer& f) {
     }
   }
   if (!extra_code(2).empty()) {
-    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    start_menu_initialiser(f, menuItemInitialized, mname, i);
     f.write_c_indented(extra_code(2), 0, '\n');
   }
   if (!extra_code(3).empty()) {
-    start_menu_initialiser(f, menuItemInitialized, mname.c_str(), i);
+    start_menu_initialiser(f, menuItemInitialized, mname, i);
     f.write_c_indented(extra_code(3), 0, '\n');
   }
   if (menuItemInitialized) {

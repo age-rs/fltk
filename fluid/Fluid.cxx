@@ -432,9 +432,8 @@ void Application::create_tmpdir() {
   }
 #endif
   if (tmpdir_path.empty()) {
-    char pbuf[FL_PATH_MAX+1];
-    preferences.get_userdata_path(pbuf, FL_PATH_MAX);
-    path = std::string(pbuf);
+    std::string path;
+    preferences.get_userdata_path(path);
     end_with_slash(path);
     path += name;
     fl_make_path(path.c_str());
@@ -1063,7 +1062,7 @@ void Application::show_help(const std::string& name) {
       fl_open_uri("https://www.fltk.org/doc-1.5/index.html");
       return;
     } else {
-      helpname = "https://www.fltk.org/" + std::string(name);
+      helpname = "https://www.fltk.org/" + name;
       fl_open_uri(helpname.c_str());
       return;
     }

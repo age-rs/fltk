@@ -105,7 +105,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Browser_.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_string_functions.h>
 #include "../../src/flstring.h"
 
 #include <stdlib.h>
@@ -224,56 +223,25 @@ void Node::delete_children() {
 
 /**
  Update a string.
- Replace a string pointer with new value, strips leading/trailing blanks.
- As a side effect, this call also sets the mod flags.
- \param[in] n new string, can be nullptr
- \param[out] p update this pointer, possibly reallocate memory
- \param[in] nostrip if set, do not strip leading and trailing spaces and tabs
- \return 1 if the string in p changed
- */
-int storestring(const char *n, const char * & p, int nostrip) {
-  if (n == p) return 0;
-  Fluid.proj.undo.checkpoint();
-  int length = 0;
-  if (n) { // see if blank, strip leading & trailing blanks
-    if (!nostrip) while (fl_ascii_isspace(*n)) n++;
-    const char *e = n + strlen(n);
-    if (!nostrip) while (e > n && fl_ascii_isspace(*(e-1))) e--;
-    length = int(e-n);
-    if (!length) n = nullptr;
-  }
-  if (n == p) return 0;
-  if (n && p && !strncmp(n,p,length) && !p[length]) return 0;
-  if (p) free((void *)p);
-  if (!n || !*n) {
-    p = nullptr;
-  } else {
-    char *q = (char *)malloc(length+1);
-    strlcpy(q,n,length+1);
-    p = q;
-  }
-  Fluid.proj.set_modflag(1);
-  return 1;
-}
-
-/**
- Update a string.
  Replace a string with a new value, strips leading/trailing blanks.
  As a side effect, this call also sets the mod flags.
- This C++11 overload delegates to the \c const \c char* version above so
- that both share the exact same side effects (undo checkpoint, comparison,
- and modflag handling).
  \param[in] n new string
  \param[out] p update this string
  \param[in] nostrip if set, do not strip leading and trailing spaces and tabs
  \return 1 if the string in p changed
  */
 int storestring(const std::string& n, std::string& p, int nostrip) {
-  const char *buffer = p.empty() ? nullptr : fl_strdup(p.c_str());
-  int changed = storestring(n.c_str(), buffer, nostrip);
-  p = buffer ? buffer : std::string();
-  free((void*)buffer);
-  return changed;
+  if (&n == &p) return 0;
+  size_t begin = 0, end = n.size();
+  if (!nostrip) { // strip leading & trailing blanks
+    while (begin < end && fl_ascii_isspace(n[begin])) begin++;
+    while (end > begin && fl_ascii_isspace(n[end - 1])) end--;
+  }
+  if (n.compare(begin, end - begin, p) == 0) return 0;
+  Fluid.proj.undo.checkpoint();
+  p.assign(n, begin, end - begin);
+  Fluid.proj.set_modflag(1);
+  return 1;
 }
 
 /**
@@ -605,7 +573,7 @@ Node *Node::remove() {
  */
 void Node::name(const std::string& n) {
   int nostrip = dynamic_cast<Comment_Node*>(this) != nullptr;
-  if (storestring(n,namestr_,nostrip)) {
+  if (storestring(n,name_,nostrip)) {
     if (visible) widget_browser->redraw();
   }
 }

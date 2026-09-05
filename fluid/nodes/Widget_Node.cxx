@@ -142,8 +142,8 @@ int item_number(Fl_Menu_Item* m, const char* i) {
     if (i[0]=='F' && i[1]=='L' && i[2]=='_')
       i += 3;
     while (m->label()) {
-      if (!strcmp(m->label(), i)) return
-        int(m->argument());
+      if (!strcmp(m->label(), i))
+        return int(m->argument());
       m++;
     }
   }
@@ -797,14 +797,14 @@ void Widget_Node::write_static(fluid::io::Code_Writer& f) {
     f.tag(Mergeback::Tag::WIDGET_CALLBACK, Mergeback::Tag::GENERIC, get_uid());
     f.write_c("}\n");
     if (!k.empty()) {
-      f.write_c("void " + k + "::" + std::string(cn) + "(" + t + "* o, " + ut + " v) {\n");
+      f.write_c("void " + k + "::" + cn + "(" + t + "* o, " + ut + " v) {\n");
       f.write_c(f.indent(1) + "((" + k + "*)(o");
       Node* q = nullptr;
       for (Node* p = parent; p && p->is_widget(); q = p, p = p->parent)
         f.write_c("->parent()");
       if (!q || !dynamic_cast<Widget_Class_Node*>(q))
         f.write_c("->user_data()");
-      f.write_c("))->" + std::string(cn) + "_i(o,v);\n}\n");
+      f.write_c("))->" + cn + "_i(o,v);\n}\n");
     }
   }
   active_image.write_static(f);

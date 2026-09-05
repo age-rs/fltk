@@ -705,7 +705,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
     int mod = 0;
     auto image_asset = ui_find_image(widget_image_input->value());
     if (image_asset) {
-      widget_image_input->value(image_asset->filename());
+      widget_image_input->value(image_asset->filename().c_str());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
         q->active_image.set(image_asset->filename(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, false);
         q->redraw();
@@ -714,7 +714,7 @@ static void cb_Browse(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------=~-=-~-~=-=------------~---=~=-~=-=~=-~=~=~- ▲ ﬂ//
+//ﬂ ▲ ----------=~-=-~-~=-=-----------~-~-=--==-=---~~=~~-=- ▲ ﬂ//
 }
 
 static void cb_(Fl_Button*, void* v) {
@@ -757,7 +757,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
     int mod = 0;
     auto image_asset = ui_find_image(widget_deimage_input->value());
     if (image_asset) {
-      widget_deimage_input->value(image_asset->filename());
+      widget_deimage_input->value(image_asset->filename().c_str());
       for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
         q->inactive_image.set(image_asset->filename(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, true);
         q->redraw();
@@ -766,7 +766,7 @@ static void cb_Browse1(Fl_Button* o, void* v) {
       if (mod) Fluid.proj.set_modflag(1);
     }
   }
-//ﬂ ▲ ----------~=~-=-~~~~~=-----------~=~--~-=-=---~~---==~ ▲ ﬂ//
+//ﬂ ▲ ----------~=~-=-~~~~~=-----------~=~~-~~=~-~~=-=~~=~-= ▲ ﬂ//
 }
 
 Fl_Group* wp_gui_alignment = (Fl_Group*)nullptr;
@@ -1553,7 +1553,7 @@ static void cb_3(Fl_Input* o, void* v) {
     if (dynamic_cast<Window_Node*>(current_widget)) {
       o->show();
       o->parent()->show();
-      o->value(((Window_Node *)current_widget)->xclass);
+      o->value(((Window_Node *)current_widget)->xclass.c_str());
     } else {
       o->hide();
       o->parent()->hide(); // hides the "X Class:" label as well
@@ -1566,12 +1566,12 @@ static void cb_3(Fl_Input* o, void* v) {
         mod = 1;
         Window_Node *wt = (Window_Node *)q;
         storestring(o->value(), wt->xclass);
-        ((Fl_Window*)(wt->o))->xclass(wt->xclass);
+        ((Fl_Window*)(wt->o))->xclass(wt->xclass.c_str());
       }
     }
     if (mod) Fluid.proj.set_modflag(1);
   }
-//ﬂ ▲ ----------~==~~~-=~-=~----------~~=~=-=-=~~~~-~~=-=-=~ ▲ ﬂ//
+//ﬂ ▲ ----------~==~~~-=~-=~-----------~-~---==~-=--=-=-~--= ▲ ﬂ//
 }
 
 static void cb_Border(Fl_Light_Button* o, void* v) {

@@ -89,11 +89,10 @@ public:
     numselected(0),
     recalc(0),
     modal(0), non_modal(0),
-    xclass(nullptr),
     sr_min_w(0), sr_min_h(0), sr_max_w(0), sr_max_h(0)
   { }
   uchar modal, non_modal;
-  const char *xclass; // junk string, used for shortcut
+  std::string xclass { };
 
   Node *make(Strategy strategy) override;
   const std::string& type_name() override { static const std::string s = "Fl_Window"; return s; }

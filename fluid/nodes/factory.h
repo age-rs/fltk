@@ -35,11 +35,11 @@ struct Fl_Menu_Item;
 extern Fl_Menu_Item New_Menu[];
 
 void fill_in_New_Menu();
-Node *typename_to_prototype(const char *inName);
+Node *typename_to_prototype(const std::string& inName);
 
-Node *add_new_widget_from_file(const char *inName, Strategy strategy);
+Node *add_new_widget_from_file(const std::string& inName, Strategy strategy);
 Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open=true);
-Node *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open=true);
+Node *add_new_widget_from_user(const std::string& inName, Strategy strategy, bool and_open=true);
 
 // ---- Declared here (rather than only in factory.cxx) so that other
 // translation units can dynamic_cast to these concrete leaf types.

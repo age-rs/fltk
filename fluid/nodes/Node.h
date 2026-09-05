@@ -60,8 +60,8 @@ class Project_Writer;
  \see Node *Fl_..._Type::make(Strategy strategy) calls `add()`
  Add single Type:
     Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open)
-    Node *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open)
-    Node *add_new_widget_from_file(const char *inName, Strategy strategy)
+    Node *add_new_widget_from_user(const std::string& inName, Strategy strategy, bool and_open)
+    Node *add_new_widget_from_file(const std::string& inName, Strategy strategy)
  Add a hierarchy of Types
     void Node::add(Node *p, Strategy strategy)
     int read_file(const char *filename, int merge, Strategy strategy)
@@ -102,7 +102,6 @@ struct TextSpan2 {
 };
 
 
-int storestring(const char *n, const char * & p, int nostrip=0);
 int storestring(const std::string& n, std::string& p, int nostrip=0);
 
 void select_all_cb(Fl_Widget *,void *);
@@ -135,7 +134,7 @@ class Node
   // ---- Node Properties
 protected:
   /// Name of a widget, or code some non-widget Types
-  std::string namestr_ { };
+  std::string name_ { };
 
   /// Label text of a widget
   std::string label_ { };
@@ -278,7 +277,7 @@ public:
   // ---- Getter and setter for various properties
 public:
   // Name of the node, used for code generation and as a unique identifier in the project.
-  const std::string& name() const { return namestr_; }
+  const std::string& name() const { return name_; }
   void name(const std::string&);
 
   // Label text of the node, used for widgets and windows.

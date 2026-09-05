@@ -1273,14 +1273,14 @@ void Window_Node::write_code2(fluid::io::Code_Writer& f) {
     f.write_c(f.indent() + var + "->clear_border();\n");
   }
   // set the xclass of the window
-  if (xclass) {
+  if (!xclass.empty()) {
     f.write_c(f.indent() + var + "->xclass(");
     f.write_cstring(xclass);
     f.write_c(");\n");
   }
   // make the window resizable
   if (((Fl_Window*)o)->resizable() == o)
-    f.write_c(f.indent() + var + "->resizable(" + std::string(var) + ");\n");
+    f.write_c(f.indent() + var + "->resizable(" + var + ");\n");
   // set the size range last
   if (sr_max_w || sr_max_h) {
     f.write_c(f.indent() + var + "->size_range(" +
@@ -1301,13 +1301,24 @@ void Window_Node::write_code2(fluid::io::Code_Writer& f) {
 
 void Window_Node::write_properties(fluid::io::Project_Writer &f) {
   Widget_Node::write_properties(f);
-  if (modal) f.write_string("modal");
-  else if (non_modal) f.write_string("non_modal");
-  if (!((Fl_Window*)o)->border()) f.write_string("noborder");
-  if (xclass) {f.write_string("xclass"); f.write_word(xclass);}
-  if (sr_min_w || sr_min_h || sr_max_w || sr_max_h)
+  if (modal) {
+    f.write_string("modal");
+  } else if (non_modal) {
+    f.write_string("non_modal");
+  }
+  if (!((Fl_Window*)o)->border()) {
+    f.write_string("noborder");
+  }
+  if (!xclass.empty()) {
+    f.write_string("xclass");
+    f.write_word(xclass);
+  }
+  if (sr_min_w || sr_min_h || sr_max_w || sr_max_h) {
     f.write_string("size_range {%d %d %d %d}", sr_min_w, sr_min_h, sr_max_w, sr_max_h);
-  if (o->visible() || override_visible_) f.write_string("visible");
+  }
+  if (o->visible() || override_visible_) {
+    f.write_string("visible");
+  }
 }
 
 void Window_Node::read_property(fluid::io::Project_Reader &f, const std::string& c) {
@@ -1324,7 +1335,7 @@ void Window_Node::read_property(fluid::io::Project_Reader &f, const std::string&
     ((Fl_Window*)o)->border(0);
   } else if (c == "xclass") {
     storestring(f.read_word(),xclass);
-    ((Fl_Window*)o)->xclass(xclass);
+    ((Fl_Window*)o)->xclass(xclass.c_str());
   } else if (c == "size_range") {
     int mw, mh, MW, MH;
     if (sscanf(f.read_word(),"%d %d %d %d",&mw,&mh,&MW,&MH) == 4) {
@@ -1507,7 +1518,7 @@ void Widget_Class_Node::write_code2(fluid::io::Code_Writer& f) {
   // clear the window border
   if (!((Fl_Window*)o)->border()) f.write_c(f.indent() + "clear_border();\n");
   // set the xclass of the window
-  if (xclass) {
+  if (!xclass.empty()) {
     f.write_c(f.indent() + "xclass(");
     f.write_cstring(xclass);
     f.write_c(");\n");

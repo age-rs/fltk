@@ -626,7 +626,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
   int mod = 0;
   auto image_asset = ui_find_image(widget_image_input->value());
   if (image_asset) {
-    widget_image_input->value(image_asset->filename());
+    widget_image_input->value(image_asset->filename().c_str());
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       q->active_image.set(image_asset->filename(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, false);
       q->redraw();
@@ -678,7 +678,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 15 t
   int mod = 0;
   auto image_asset = ui_find_image(widget_deimage_input->value());
   if (image_asset) {
-    widget_deimage_input->value(image_asset->filename());
+    widget_deimage_input->value(image_asset->filename().c_str());
     for (Widget_Node *q: Fluid.proj.tree.all_selected_widgets()) {
       q->inactive_image.set(image_asset->filename(), dynamic_cast<Window_Node*>(q) ? nullptr : q->o, true);
       q->redraw();
@@ -1614,7 +1614,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
   if (dynamic_cast<Window_Node*>(current_widget)) {
     o->show();
     o->parent()->show();
-    o->value(((Window_Node *)current_widget)->xclass);
+    o->value(((Window_Node *)current_widget)->xclass.c_str());
   } else {
     o->hide();
     o->parent()->hide(); // hides the "X Class:" label as well
@@ -1627,7 +1627,7 @@ Use 'Backspace' key to clear.} xywh {95 210 310 20} box DOWN_BOX color 7 selecti
       mod = 1;
       Window_Node *wt = (Window_Node *)q;
       storestring(o->value(), wt->xclass);
-      ((Fl_Window*)(wt->o))->xclass(wt->xclass);
+      ((Fl_Window*)(wt->o))->xclass(wt->xclass.c_str());
     }
   }
   if (mod) Fluid.proj.set_modflag(1);

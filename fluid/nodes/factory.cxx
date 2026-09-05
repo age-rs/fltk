@@ -1003,9 +1003,9 @@ static Node *known_types[] = {
  \param[in] and_open if set to true, call open() on the widget after creating it
  \return the newly created type or nullptr
 
- \see add_new_widget_from_file(const char*, int)
+ \see add_new_widget_from_file(const std::string&, int)
  add_new_widget_from_user(Node*, int)
- add_new_widget_from_user(const char*, int)
+ add_new_widget_from_user(const std::string&, int)
  */
 Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_open) {
   Fluid.proj.undo.checkpoint();
@@ -1133,11 +1133,11 @@ Node *add_new_widget_from_user(Node *inPrototype, Strategy strategy, bool and_op
  \param[in] and_open if set to true, call open() on the widget after creating it
  \return the newly created type or nullptr
 
- \see add_new_widget_from_file(const char*, int)
- add_new_widget_from_user(Node*, int)
- add_new_widget_from_user(const char*, int)
+ \see add_new_widget_from_file(const std::string&, Strategy)
+ add_new_widget_from_user(Node*, Strategy)
+ add_new_widget_from_user(const std::string&, Strategy)
  */
-Node *add_new_widget_from_user(const char *inName, Strategy strategy, bool and_open) {
+Node *add_new_widget_from_user(const std::string& inName, Strategy strategy, bool and_open) {
   Node *prototype = typename_to_prototype(inName);
   if (prototype)
     return add_new_widget_from_user(prototype, strategy, and_open);
@@ -1311,15 +1311,15 @@ void fill_in_New_Menu() {
     one of the known Node classes.
  \return the matching prototype or nullptr
  */
-Node *typename_to_prototype(const char *inName)
+Node *typename_to_prototype(const std::string& inName)
 {
-  if (inName==nullptr || *inName==0)
+  if (inName.empty())
     return nullptr;
   for (unsigned i = 0; i < sizeof(known_types)/sizeof(*known_types); i++) {
     Node *prototype = known_types[i];
-    if (fl_ascii_strcasecmp(inName, prototype->type_name().c_str())==0)
+    if (fl_ascii_strcasecmp(inName.c_str(), prototype->type_name().c_str())==0)
       return prototype;
-    if (fl_ascii_strcasecmp(inName, prototype->alt_type_name().c_str())==0)
+    if (fl_ascii_strcasecmp(inName.c_str(), prototype->alt_type_name().c_str())==0)
       return prototype;
   }
   return nullptr;
@@ -1335,11 +1335,11 @@ Node *typename_to_prototype(const char *inName)
  \param[in] inName a C string that described the type we want
  \param[in] strategy add after current or as last child
  \return the node that was created or nullptr
- \see add_new_widget_from_file(const char*, int)
- add_new_widget_from_user(Node*, int)
- add_new_widget_from_user(const char*, int)
+ \see add_new_widget_from_file(const std::string&, Strategy)
+ add_new_widget_from_user(Node*, Strategy)
+ add_new_widget_from_user(const std::string&, Strategy)
 */
-Node *add_new_widget_from_file(const char *inName, Strategy strategy) {
+Node *add_new_widget_from_file(const std::string& inName, Strategy strategy) {
   Node *prototype = typename_to_prototype(inName);
   if (!prototype)
     return nullptr;
